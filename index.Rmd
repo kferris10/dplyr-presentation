@@ -1,0 +1,254 @@
+---
+title       : dplyr
+subtitle    : A gamechanger for data manipulation in R
+author      : Kevin Ferris
+job         : Montana State University
+framework   : io2012        # 
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+assets:
+  css:
+    - "assets/css/styles.css"
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE, cache=FALSE}
+library(knitr)
+library(plyr)
+opts_chunk$set(echo = T, 
+               message = F, 
+               warning = F, 
+               cache = T, 
+               tidy = F, 
+               comment = "#>", 
+               fig.align = "center", 
+               fig.width = 8, 
+               fig.height = 5, 
+               digits = 3, 
+               size = "small")
+options(show.signif.stars = F, 
+        digits = 2)
+set.seed(99)
+```
+
+
+
+## dplyr
+
+A new R package written by Hadley Wickham and Romain Francois (Wickham and Francois, 2014)
+> * Provides a flexible grammar of data manipulation
+> * Identifies the most important tasks in data manipulation and makes them easy to use
+> * Provides blazing fast performance by writing key code in C++
+> * Uses the same interface to manipulate data frames, data tables, and databases
+
+---
+## Common functions
+
+1. `tbl_df`: for printing data.frames nicely
+2. `select`: for choosing columns in a dataset
+3. `filter`: for choosing rows in a dataset
+4. `arrange`: for reordering rows in a dataset
+5. `mutate`: for adding new columns to the dataset
+6. `group_by`: for creating a grouped dataset
+7. `summarise`: for summarizing a dataset
+
+---
+## Baseball data for an example
+
+Who hit the most home runs for one team since 1920?
+
+```{r lahman}
+library(Lahman)
+head(Batting)
+```
+
+
+---
+## 1. Print data.frames with `tbl_df()`
+
+Prints nicely and prevents you from accidentally printing the whole dataset.
+
+```{r tbl_df}
+library(dplyr)
+batting_df <- tbl_df(Batting)
+batting_df
+```
+
+---
+## 2. Select columns with `select()`
+
+Subset columns by name
+
+```{r select}
+batting_s <- select(batting_df, playerID, yearID, teamID, G, H, X2B, X3B, HR)
+batting_s
+```
+
+---
+## 3. Filter rows with `filter()`
+
+Chooses rows that match your criteria criteria
+
+```{r filter}
+batting_f <- filter(batting_s, yearID > 2000, HR > 10)
+batting_f
+```
+
+---
+## 4. Arrange rows with `arrange()`
+
+Reorders rows
+
+```{r arrange}
+batting_a <- arrange(batting_f, yearID, desc(HR))
+batting_a
+```
+
+---
+## 5. Add new columns with `mutate()`
+
+Adds new columns
+
+```{r mutate}
+batting_m <- mutate(batting_a, X1B = H - X2B - X3B - HR)
+batting_m
+```
+
+---
+## Steps so far
+
+1. Turn data.frame into a `tbl_df`
+2. Select columns
+3. Select rows
+4. Arrange rows
+5. Add new columns
+
+---
+## Nested, Unreadable Code
+
+```{r nested-code}
+mutate(
+  arrange(
+    filter(
+      select(
+        tbl_df(
+          Batting), 
+        playerID, yearID, teamID, G, H, X2B, X3B, HR), 
+      yearID > 2000, HR > 10), 
+    yearID, desc(HR)), 
+  X1B = H - X2B - X3B - HR)
+```
+
+---
+## Chaining
+
+`dplyr` provides the `%>%` operator.  
+
+```{r chaining}
+x <- 1:3
+prod(cumsum(x))
+x %>% 
+  cumsum() %>% 
+  prod()
+```
+
+> * This executes one command, **THEN** executes a second command.
+
+> * This makes your code much more readable.
+
+---
+## Chaining Example
+
+```{r chain-ex}
+Batting %>%                                                 # takes the Batting data.frame, THEN
+  tbl_df() %>%                                              # turns it into a tbl_df, THEN
+  select(playerID, yearID, teamID, G, H, X2B, X3B, HR) %>%  # selects the columns, THEN
+  filter(yearID > 2000, HR > 10) %>%                        # filters the rows, THEN
+  arrange(yearID, desc(HR)) %>%                             # reorders the rows, THEN
+  mutate(X1B = H - X2B - X3B - HR)                          # adds columns
+```
+
+---
+## 6) Grouping with `group_by()`
+
+Created a grouped tbl where operations are performed "by group"
+
+Not really useful on its own, so let's combine it with...
+
+--- 
+## 7) Summarising with `summarise()`
+
+Summarise each group in a tbl
+
+```{r group-summarise}
+batting_m %>%            # take the batting_m tbl_df, THEN
+  group_by(yearID) %>%   # groups it by year, THEN
+  summarise(sum(HR)) %>% # sums HR for each yearID, THEN
+  head()                 # prints the first six years
+```
+
+---
+## `dplyr` is much, much, much, faster
+
+```{r comparison}
+library(microbenchmark)
+microbenchmark(dplyr = batting_m %>% group_by(yearID) %>% summarise(sum(HR)), 
+               plyr = ddply(batting_m, .(yearID), summarise, sum(HR)), 
+               agg = aggregate(batting_m$HR, list(year = batting_m$yearID), sum), 
+               tapp = tapply(batting_m$HR, list(batting_m$yearID), sum), 
+               times = 500L)
+```
+
+---
+## `dplyr` is even faster than `tapply` when there are many groups
+
+```{r comparison2}
+microbenchmark(dplyr = batting_m %>% group_by(yearID, playerID) %>% summarise(sum(HR)),
+               tapp = tapply(batting_m$HR, list(batting_m$yearID, batting_m$playerID), sum), 
+               times = 500L)
+```
+
+
+---
+## So who hit the most home runs for one team since 1920?
+
+```{r home-runs}
+Batting %>% 
+  tbl_df() %>% 
+  filter(yearID >= 1920) %>% 
+  group_by(playerID, teamID) %>% 
+  summarise(HR = sum(HR), 
+            years = paste(min(yearID), max(yearID), sep = ":")) %>% 
+  ungroup() %>% 
+  arrange(desc(HR)) %>% 
+  head()
+```
+<!--
+---
+## Joining with the `join()` verbs
+
+`dplyr` implements SQL style joins with `inner_join()`, `left_join()`, `semi_join()`, and `anti_join()`
+
+```{r join}
+inner_join(batting_m, Master)
+```
+-->
+
+## Other cool `dplyr` features
+
+> * `dplyr` implements SQL style joins
+> * can connect to SQL databases, run SQL code outside of R, then pull the results into R
+> * other people are actively providing enhancements to `dplyr`
+   * `tidyr` for reshaping data
+   * `assertr` for making assertions abou the data
+   * `magrittr` and `pipeR` for chaining
+
+## Other Resources
+
+1. To migrate from `plyr` [plyrToDplyr](https://github.com/jimhester/plyrTodplyr)
+
+
+
+

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>dplyr</title>
+  <meta charset="utf-8">
+  <meta name="description" content="dplyr">
+  <meta name="author" content="Kevin Ferris">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+<link rel=stylesheet href="./assets/css/styles.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>dplyr</h1>
+    <h2>A gamechanger for data manipulation in R</h2>
+    <p>Kevin Ferris<br/>Montana State University</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>dplyr</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>A new R package written by Hadley Wickham and Romain Francois (Wickham and Francois, 2014)</p>
+
+<ul class = "build incremental">
+<li>Provides a flexible grammar of data manipulation</li>
+<li>Identifies the most important tasks in data manipulation and makes them easy to use</li>
+<li>Provides blazing fast performance by writing key code in C++</li>
+<li>Uses the same interface to manipulate data frames, data tables, and databases</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Common functions</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li><code>tbl_df</code>: for printing data.frames nicely</li>
+<li><code>select</code>: for choosing columns in a dataset</li>
+<li><code>filter</code>: for choosing rows in a dataset</li>
+<li><code>arrange</code>: for reordering rows in a dataset</li>
+<li><code>mutate</code>: for adding new columns to the dataset</li>
+<li><code>group_by</code>: for creating a grouped dataset</li>
+<li><code>summarise</code>: for summarizing a dataset</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Baseball data for an example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Who hit the most home runs for one team since 1920?</p>
+
+<pre><code class="r">library(Lahman)
+head(Batting)
+</code></pre>
+
+<pre><code>#&gt;    playerID yearID stint teamID lgID  G G_batting AB R H X2B X3B HR RBI SB
+#&gt; 1 aardsda01   2004     1    SFN   NL 11        11  0 0 0   0   0  0   0  0
+#&gt; 2 aardsda01   2006     1    CHN   NL 45        43  2 0 0   0   0  0   0  0
+#&gt; 3 aardsda01   2007     1    CHA   AL 25         2  0 0 0   0   0  0   0  0
+#&gt; 4 aardsda01   2008     1    BOS   AL 47         5  1 0 0   0   0  0   0  0
+#&gt; 5 aardsda01   2009     1    SEA   AL 73         3  0 0 0   0   0  0   0  0
+#&gt; 6 aardsda01   2010     1    SEA   AL 53         4  0 0 0   0   0  0   0  0
+#&gt;   CS BB SO IBB HBP SH SF GIDP G_old
+#&gt; 1  0  0  0   0   0  0  0    0    11
+#&gt; 2  0  0  0   0   0  1  0    0    45
+#&gt; 3  0  0  0   0   0  0  0    0     2
+#&gt; 4  0  0  1   0   0  0  0    0     5
+#&gt; 5  0  0  0   0   0  0  0    0    NA
+#&gt; 6  0  0  0   0   0  0  0    0    NA
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>1. Print data.frames with <code>tbl_df()</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Prints nicely and prevents you from accidentally printing the whole dataset.</p>
+
+<pre><code class="r">library(dplyr)
+batting_df &lt;- tbl_df(Batting)
+batting_df
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [97,889 x 24]
+#&gt; 
+#&gt;     playerID yearID stint teamID lgID   G G_batting  AB   R   H X2B X3B HR
+#&gt; 1  aardsda01   2004     1    SFN   NL  11        11   0   0   0   0   0  0
+#&gt; 2  aardsda01   2006     1    CHN   NL  45        43   2   0   0   0   0  0
+#&gt; 3  aardsda01   2007     1    CHA   AL  25         2   0   0   0   0   0  0
+#&gt; 4  aardsda01   2008     1    BOS   AL  47         5   1   0   0   0   0  0
+#&gt; 5  aardsda01   2009     1    SEA   AL  73         3   0   0   0   0   0  0
+#&gt; 6  aardsda01   2010     1    SEA   AL  53         4   0   0   0   0   0  0
+#&gt; 7  aardsda01   2012     1    NYA   AL   1        NA  NA  NA  NA  NA  NA NA
+#&gt; 8  aaronha01   1954     1    ML1   NL 122       122 468  58 131  27   6 13
+#&gt; 9  aaronha01   1955     1    ML1   NL 153       153 602 105 189  37   9 27
+#&gt; 10 aaronha01   1956     1    ML1   NL 153       153 609 106 200  34  14 26
+#&gt; ..       ...    ...   ...    ...  ... ...       ... ... ... ... ... ... ..
+#&gt; Variables not shown: RBI (int), SB (int), CS (int), BB (int), SO (int),
+#&gt;   IBB (int), HBP (int), SH (int), SF (int), GIDP (int), G_old (int)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>2. Select columns with <code>select()</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Subset columns by name</p>
+
+<pre><code class="r">batting_s &lt;- select(batting_df, playerID, yearID, teamID, G, H, X2B, X3B, HR)
+batting_s
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [97,889 x 8]
+#&gt; 
+#&gt;     playerID yearID teamID   G   H X2B X3B HR
+#&gt; 1  aardsda01   2004    SFN  11   0   0   0  0
+#&gt; 2  aardsda01   2006    CHN  45   0   0   0  0
+#&gt; 3  aardsda01   2007    CHA  25   0   0   0  0
+#&gt; 4  aardsda01   2008    BOS  47   0   0   0  0
+#&gt; 5  aardsda01   2009    SEA  73   0   0   0  0
+#&gt; 6  aardsda01   2010    SEA  53   0   0   0  0
+#&gt; 7  aardsda01   2012    NYA   1  NA  NA  NA NA
+#&gt; 8  aaronha01   1954    ML1 122 131  27   6 13
+#&gt; 9  aaronha01   1955    ML1 153 189  37   9 27
+#&gt; 10 aaronha01   1956    ML1 153 200  34  14 26
+#&gt; ..       ...    ...    ... ... ... ... ... ..
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>3. Filter rows with <code>filter()</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Chooses rows that match your criteria criteria</p>
+
+<pre><code class="r">batting_f &lt;- filter(batting_s, yearID &gt; 2000, HR &gt; 10)
+batting_f
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [2,290 x 8]
+#&gt; 
+#&gt;     playerID yearID teamID   G   H X2B X3B HR
+#&gt; 1  abreubo01   2001    PHI 162 170  48   4 31
+#&gt; 2  abreubo01   2002    PHI 157 176  50   6 20
+#&gt; 3  abreubo01   2003    PHI 158 173  35   1 20
+#&gt; 4  abreubo01   2004    PHI 159 173  47   1 30
+#&gt; 5  abreubo01   2005    PHI 162 168  37   1 24
+#&gt; 6  abreubo01   2007    NYA 158 171  40   5 16
+#&gt; 7  abreubo01   2008    NYA 156 180  39   4 20
+#&gt; 8  abreubo01   2009    LAA 152 165  29   3 15
+#&gt; 9  abreubo01   2010    LAA 154 146  41   1 20
+#&gt; 10 ackledu01   2012    SEA 153 137  22   2 12
+#&gt; ..       ...    ...    ... ... ... ... ... ..
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>4. Arrange rows with <code>arrange()</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Reorders rows</p>
+
+<pre><code class="r">batting_a &lt;- arrange(batting_f, yearID, desc(HR))
+batting_a
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [2,290 x 8]
+#&gt; 
+#&gt;     playerID yearID teamID   G   H X2B X3B HR
+#&gt; 1  bondsba01   2001    SFN 153 156  32   2 73
+#&gt; 2   sosasa01   2001    CHN 160 189  34   5 64
+#&gt; 3  gonzalu01   2001    ARI 162 198  36   7 57
+#&gt; 4  rodrial01   2001    TEX 162 201  34   1 52
+#&gt; 5  greensh01   2001    LAN 161 184  31   4 49
+#&gt; 6  heltoto01   2001    COL 159 197  54   2 49
+#&gt; 7  thomeji01   2001    CLE 156 153  26   1 49
+#&gt; 8  palmera01   2001    TEX 160 164  33   0 47
+#&gt; 9  sexsori01   2001    MIL 158 162  24   3 45
+#&gt; 10 glaustr01   2001    ANA 161 147  38   2 41
+#&gt; ..       ...    ...    ... ... ... ... ... ..
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>5. Add new columns with <code>mutate()</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Adds new columns</p>
+
+<pre><code class="r">batting_m &lt;- mutate(batting_a, X1B = H - X2B - X3B - HR)
+batting_m
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [2,290 x 9]
+#&gt; 
+#&gt;     playerID yearID teamID   G   H X2B X3B HR X1B
+#&gt; 1  bondsba01   2001    SFN 153 156  32   2 73  49
+#&gt; 2   sosasa01   2001    CHN 160 189  34   5 64  86
+#&gt; 3  gonzalu01   2001    ARI 162 198  36   7 57  98
+#&gt; 4  rodrial01   2001    TEX 162 201  34   1 52 114
+#&gt; 5  greensh01   2001    LAN 161 184  31   4 49 100
+#&gt; 6  heltoto01   2001    COL 159 197  54   2 49  92
+#&gt; 7  thomeji01   2001    CLE 156 153  26   1 49  77
+#&gt; 8  palmera01   2001    TEX 160 164  33   0 47  84
+#&gt; 9  sexsori01   2001    MIL 158 162  24   3 45  90
+#&gt; 10 glaustr01   2001    ANA 161 147  38   2 41  66
+#&gt; ..       ...    ...    ... ... ... ... ... .. ...
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Steps so far</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li>Turn data.frame into a <code>tbl_df</code></li>
+<li>Select columns</li>
+<li>Select rows</li>
+<li>Arrange rows</li>
+<li>Add new columns</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    <h2>Nested, Unreadable Code</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">mutate(
+  arrange(
+    filter(
+      select(
+        tbl_df(
+          Batting), 
+        playerID, yearID, teamID, G, H, X2B, X3B, HR), 
+      yearID &gt; 2000, HR &gt; 10), 
+    yearID, desc(HR)), 
+  X1B = H - X2B - X3B - HR)
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [2,290 x 9]
+#&gt; 
+#&gt;     playerID yearID teamID   G   H X2B X3B HR X1B
+#&gt; 1  bondsba01   2001    SFN 153 156  32   2 73  49
+#&gt; 2   sosasa01   2001    CHN 160 189  34   5 64  86
+#&gt; 3  gonzalu01   2001    ARI 162 198  36   7 57  98
+#&gt; 4  rodrial01   2001    TEX 162 201  34   1 52 114
+#&gt; 5  greensh01   2001    LAN 161 184  31   4 49 100
+#&gt; 6  heltoto01   2001    COL 159 197  54   2 49  92
+#&gt; 7  thomeji01   2001    CLE 156 153  26   1 49  77
+#&gt; 8  palmera01   2001    TEX 160 164  33   0 47  84
+#&gt; 9  sexsori01   2001    MIL 158 162  24   3 45  90
+#&gt; 10 glaustr01   2001    ANA 161 147  38   2 41  66
+#&gt; ..       ...    ...    ... ... ... ... ... .. ...
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>Chaining</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><code>dplyr</code> provides the <code>%&gt;%</code> operator.  </p>
+
+<pre><code class="r">x &lt;- 1:3
+prod(cumsum(x))
+</code></pre>
+
+<pre><code>#&gt; [1] 18
+</code></pre>
+
+<pre><code class="r">x %&gt;% 
+  cumsum() %&gt;% 
+  prod()
+</code></pre>
+
+<pre><code>#&gt; [1] 18
+</code></pre>
+
+<ul class = "build incremental">
+<li><p>This executes one command, <strong>THEN</strong> executes a second command.</p></li>
+<li><p>This makes your code much more readable.</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h2>Chaining Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">Batting %&gt;%                                                 # takes the Batting data.frame, THEN
+  tbl_df() %&gt;%                                              # turns it into a tbl_df, THEN
+  select(playerID, yearID, teamID, G, H, X2B, X3B, HR) %&gt;%  # selects the columns, THEN
+  filter(yearID &gt; 2000, HR &gt; 10) %&gt;%                        # filters the rows, THEN
+  arrange(yearID, desc(HR)) %&gt;%                             # reorders the rows, THEN
+  mutate(X1B = H - X2B - X3B - HR)                          # adds columns
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [2,290 x 9]
+#&gt; 
+#&gt;     playerID yearID teamID   G   H X2B X3B HR X1B
+#&gt; 1  bondsba01   2001    SFN 153 156  32   2 73  49
+#&gt; 2   sosasa01   2001    CHN 160 189  34   5 64  86
+#&gt; 3  gonzalu01   2001    ARI 162 198  36   7 57  98
+#&gt; 4  rodrial01   2001    TEX 162 201  34   1 52 114
+#&gt; 5  greensh01   2001    LAN 161 184  31   4 49 100
+#&gt; 6  heltoto01   2001    COL 159 197  54   2 49  92
+#&gt; 7  thomeji01   2001    CLE 156 153  26   1 49  77
+#&gt; 8  palmera01   2001    TEX 160 164  33   0 47  84
+#&gt; 9  sexsori01   2001    MIL 158 162  24   3 45  90
+#&gt; 10 glaustr01   2001    ANA 161 147  38   2 41  66
+#&gt; ..       ...    ...    ... ... ... ... ... .. ...
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Grouping with <code>group_by()</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Created a grouped tbl where operations are performed &quot;by group&quot;</p>
+
+<p>Not really useful on its own, so let&#39;s combine it with...</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-14" style="background:;">
+  <hgroup>
+    <h2>Summarising with <code>summarise()</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Summarise each group in a tbl</p>
+
+<pre><code class="r">batting_m %&gt;%            # take the batting_m tbl_df, THEN
+  group_by(yearID) %&gt;%   # groups it by year, THEN
+  summarise(sum(HR)) %&gt;% # sums HR for each yearID, THEN
+  head()                 # prints the first six years
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [6 x 2]
+#&gt; 
+#&gt;   yearID sum(HR)
+#&gt; 1   2001    3988
+#&gt; 2   2002    3616
+#&gt; 3   2003    3855
+#&gt; 4   2004    4073
+#&gt; 5   2005    3696
+#&gt; 6   2006    3950
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-15" style="background:;">
+  <hgroup>
+    <h2><code>dplyr</code> is much, much, much, faster</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">library(microbenchmark)
+microbenchmark(dplyr = batting_m %&gt;% group_by(yearID) %&gt;% summarise(sum(HR)), 
+               plyr = ddply(batting_m, .(yearID), summarise, sum(HR)), 
+               agg = aggregate(batting_m$HR, list(year = batting_m$yearID), sum), 
+               tapp = tapply(batting_m$HR, list(batting_m$yearID), sum), 
+               times = 500L)
+</code></pre>
+
+<pre><code>#&gt; Unit: milliseconds
+#&gt;   expr  min   lq mean median   uq   max neval  cld
+#&gt;  dplyr  3.3  3.9  4.8    4.8  5.4  18.2   500  b  
+#&gt;   plyr 44.3 51.2 56.0   54.2 57.7 223.2   500    d
+#&gt;    agg 24.3 31.6 34.4   34.4 36.9  63.9   500   c 
+#&gt;   tapp  1.4  1.6  2.2    2.4  2.5   7.3   500 a
+</code></pre>
+
+<h2><code>dplyr</code> is even faster than <code>tapply</code> when there are many groups</h2>
+
+<pre><code class="r">microbenchmark(dplyr = batting_m %&gt;% group_by(yearID, playerID) %&gt;% summarise(sum(HR)),
+               tapp = tapply(batting_m$HR, list(batting_m$yearID, batting_m$playerID), sum), 
+               times = 500L)
+</code></pre>
+
+<pre><code>#&gt; Unit: milliseconds
+#&gt;   expr min lq mean median uq max neval cld
+#&gt;  dplyr  13 17   20     18 20 849   500  a 
+#&gt;   tapp  31 41   45     44 47  73   500   b
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-16" style="background:;">
+  <hgroup>
+    <h2>So who hit the most home runs for one team since 1920?</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">Batting %&gt;% 
+  tbl_df() %&gt;% 
+  filter(yearID &gt;= 1920) %&gt;% 
+  group_by(playerID, teamID) %&gt;% 
+  summarise(HR = sum(HR), 
+            years = paste(min(yearID), max(yearID), sep = &quot;:&quot;)) %&gt;% 
+  ungroup() %&gt;% 
+  arrange(desc(HR)) %&gt;% 
+  head()
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [6 x 4]
+#&gt; 
+#&gt;    playerID teamID  HR     years
+#&gt; 1  ruthba01    NYA 659 1920:1934
+#&gt; 2 bondsba01    SFN 586 1993:2007
+#&gt; 3 schmimi01    PHI 548 1972:1989
+#&gt; 4  sosasa01    CHN 545 1992:2004
+#&gt; 5 mantlmi01    NYA 536 1951:1968
+#&gt; 6 willite01    BOS 521 1939:1960
+</code></pre>
+
+<!--
+---
+## Joining with the `join()` verbs
+
+`dplyr` implements SQL style joins with `inner_join()`, `left_join()`, `semi_join()`, and `anti_join()`
+
+
+```r
+inner_join(batting_m, Master)
+```
+
+```
+#> Source: local data frame [2,290 x 34]
+#> 
+#>     playerID yearID teamID   G   H X2B X3B HR X1B birthYear birthMonth
+#> 1  bondsba01   2001    SFN 153 156  32   2 73  49      1964          7
+#> 2   sosasa01   2001    CHN 160 189  34   5 64  86      1968         11
+#> 3  gonzalu01   2001    ARI 162 198  36   7 57  98      1967          9
+#> 4  rodrial01   2001    TEX 162 201  34   1 52 114      1975          7
+#> 5  greensh01   2001    LAN 161 184  31   4 49 100      1972         11
+#> 6  heltoto01   2001    COL 159 197  54   2 49  92      1973          8
+#> 7  thomeji01   2001    CLE 156 153  26   1 49  77      1970          8
+#> 8  palmera01   2001    TEX 160 164  33   0 47  84      1964          9
+#> 9  sexsori01   2001    MIL 158 162  24   3 45  90      1974         12
+#> 10 glaustr01   2001    ANA 161 147  38   2 41  66      1976          8
+#> ..       ...    ...    ... ... ... ... ... .. ...       ...        ...
+#> Variables not shown: birthDay (int), birthCountry (chr), birthState (chr),
+#>   birthCity (chr), deathYear (int), deathMonth (int), deathDay (int),
+#>   deathCountry (chr), deathState (chr), deathCity (chr), nameFirst (chr),
+#>   nameLast (chr), nameGiven (chr), weight (int), height (int), bats
+#>   (fctr), throws (fctr), debut (chr), finalGame (chr), retroID (chr),
+#>   bbrefID (chr), deathDate (date), birthDate (date)
+```
+-->
+
+<h2>Other cool <code>dplyr</code> features</h2>
+
+<ul class = "build incremental">
+<li><code>dplyr</code> implements SQL style joins</li>
+<li>can connect to SQL databases, run SQL code outside of R, then pull the results into R</li>
+<li>other people are actively providing enhancements to <code>dplyr</code>
+
+<ul>
+<li><code>tidyr</code> for reshaping data</li>
+<li><code>assertr</code> for making assertions abou the data</li>
+<li><code>magrittr</code> and <code>pipeR</code> for chaining</li>
+</ul></li>
+</ul>
+
+<h2>Other Resources</h2>
+
+<ol>
+<li>To migrate from <code>plyr</code> <a href="https://github.com/jimhester/plyrTodplyr">plyrToDplyr</a></li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='dplyr'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Common functions'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Baseball data for an example'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='1. Print data.frames with <code>tbl_df()</code>'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='2. Select columns with <code>select()</code>'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='3. Filter rows with <code>filter()</code>'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='4. Arrange rows with <code>arrange()</code>'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='5. Add new columns with <code>mutate()</code>'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Steps so far'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='Nested, Unreadable Code'>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='Chaining'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='Chaining Example'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Grouping with <code>group_by()</code>'>
+         13
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=14 title='Summarising with <code>summarise()</code>'>
+         14
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=15 title='<code>dplyr</code> is much, much, much, faster'>
+         15
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=16 title='So who hit the most home runs for one team since 1920?'>
+         16
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
