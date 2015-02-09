@@ -388,7 +388,7 @@ prod(cumsum(x))
 
 <slide class="" id="slide-13" style="background:;">
   <hgroup>
-    <h2>Grouping with <code>group_by()</code></h2>
+    <h2>6) Grouping with <code>group_by()</code></h2>
   </hgroup>
   <article data-timings="">
     <p>Created a grouped tbl where operations are performed &quot;by group&quot;</p>
@@ -401,7 +401,7 @@ prod(cumsum(x))
 
 <slide class="" id="slide-14" style="background:;">
   <hgroup>
-    <h2>Summarising with <code>summarise()</code></h2>
+    <h2>7) Summarising with <code>summarise()</code></h2>
   </hgroup>
   <article data-timings="">
     <p>Summarise each group in a tbl</p>
@@ -448,9 +448,16 @@ microbenchmark(dplyr = batting_m %&gt;% group_by(yearID) %&gt;% summarise(sum(HR
 #&gt;   tapp  1.4  1.6  2.2    2.4  2.5   7.3   500 a
 </code></pre>
 
-<h2><code>dplyr</code> is even faster than <code>tapply</code> when there are many groups</h2>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
 
-<pre><code class="r">microbenchmark(dplyr = batting_m %&gt;% group_by(yearID, playerID) %&gt;% summarise(sum(HR)),
+<slide class="" id="slide-16" style="background:;">
+  <hgroup>
+    <h2><code>dplyr</code> is even faster than <code>tapply</code> when there are many groups</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">microbenchmark(dplyr = batting_m %&gt;% group_by(yearID, playerID) %&gt;% summarise(sum(HR)),
                tapp = tapply(batting_m$HR, list(batting_m$yearID, batting_m$playerID), sum), 
                times = 500L)
 </code></pre>
@@ -465,20 +472,20 @@ microbenchmark(dplyr = batting_m %&gt;% group_by(yearID) %&gt;% summarise(sum(HR
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-16" style="background:;">
+<slide class="" id="slide-17" style="background:;">
   <hgroup>
     <h2>So who hit the most home runs for one team since 1920?</h2>
   </hgroup>
   <article data-timings="">
-    <pre><code class="r">Batting %&gt;% 
+    <pre><code class="r">result &lt;- Batting %&gt;% 
   tbl_df() %&gt;% 
   filter(yearID &gt;= 1920) %&gt;% 
   group_by(playerID, teamID) %&gt;% 
   summarise(HR = sum(HR), 
             years = paste(min(yearID), max(yearID), sep = &quot;:&quot;)) %&gt;% 
   ungroup() %&gt;% 
-  arrange(desc(HR)) %&gt;% 
-  head()
+  arrange(desc(HR))
+head(result)
 </code></pre>
 
 <pre><code>#&gt; Source: local data frame [6 x 4]
@@ -527,24 +534,80 @@ inner_join(batting_m, Master)
 ```
 -->
 
-<h2>Other cool <code>dplyr</code> features</h2>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
 
-<ul class = "build incremental">
+<slide class="" id="slide-18" style="background:;">
+  <hgroup>
+    <h2>Other cool <code>dplyr</code> features</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
 <li><code>dplyr</code> implements SQL style joins</li>
+</ul>
+
+<pre><code class="r">inner_join(result, Master %&gt;% select(playerID, nameLast)) %&gt;% head()
+</code></pre>
+
+<pre><code>#&gt; Source: local data frame [6 x 5]
+#&gt; 
+#&gt;    playerID teamID  HR     years nameLast
+#&gt; 1  ruthba01    NYA 659 1920:1934     Ruth
+#&gt; 2 bondsba01    SFN 586 1993:2007    Bonds
+#&gt; 3 schmimi01    PHI 548 1972:1989  Schmidt
+#&gt; 4  sosasa01    CHN 545 1992:2004     Sosa
+#&gt; 5 mantlmi01    NYA 536 1951:1968   Mantle
+#&gt; 6 willite01    BOS 521 1939:1960 Williams
+</code></pre>
+
+<ul>
 <li>can connect to SQL databases, run SQL code outside of R, then pull the results into R</li>
+<li><code>dplyr</code> uses the same commands whether the data are stored in a database or loaded into R</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-19" style="background:;">
+  <hgroup>
+    <h2>Other cool <code>dplyr</code> features</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
 <li>other people are actively providing enhancements to <code>dplyr</code>
 
 <ul>
 <li><code>tidyr</code> for reshaping data</li>
-<li><code>assertr</code> for making assertions abou the data</li>
+<li><code>assertr</code> for making assertions about the data</li>
 <li><code>magrittr</code> and <code>pipeR</code> for chaining</li>
+<li><code>Rcpp</code> for speeding things up</li>
 </ul></li>
 </ul>
 
-<h2>Other Resources</h2>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
 
-<ol>
-<li>To migrate from <code>plyr</code> <a href="https://github.com/jimhester/plyrTodplyr">plyrToDplyr</a></li>
+<slide class="" id="slide-20" style="background:;">
+  <hgroup>
+    <h2>Other Resources</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li><a href="http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">dplyr cheatsheet</a></li>
+<li><code>dplyr</code>&#39;s vignettes <code>browseVignettes(package = &quot;dplyr&quot;)</code></li>
+<li>Introductions: 
+
+<ul>
+<li><a href="http://practicalrvideos.blogspot.com/2014/08/dplyr-gamechanger-for-data-manipulation.html">5 minute intro</a></li>
+<li><a href="https://www.dropbox.com/sh/i8qnluwmuieicxc/AAAgt9tIKoIm7WZKIyK25lh6a">Wickham&#39;s tutorial</a> (open the dplyr-tutorial.pdf document)</li>
+<li><a href="http://patilv.com/dplyr/">A much more thorough tutorial</a></li>
+</ul></li>
+<li><a href="https://github.com/jimhester/plyrTodplyr">Migrating from <code>plyr</code></a></li>
+<li><a href="http://datascience.la/dplyr-some-more-reflections/">Some general thoughts</a></li>
+<li><a href="http://timelyportfolio.github.io/rCharts_factor_analytics/factors_with_new_R.html">More advanced example</a></li>
 </ol>
 
   </article>
@@ -629,13 +692,13 @@ inner_join(batting_m, Master)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=13 title='Grouping with <code>group_by()</code>'>
+        data-slide=13 title='6) Grouping with <code>group_by()</code>'>
          13
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=14 title='Summarising with <code>summarise()</code>'>
+        data-slide=14 title='7) Summarising with <code>summarise()</code>'>
          14
       </a>
     </li>
@@ -647,8 +710,32 @@ inner_join(batting_m, Master)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=16 title='So who hit the most home runs for one team since 1920?'>
+        data-slide=16 title='<code>dplyr</code> is even faster than <code>tapply</code> when there are many groups'>
          16
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=17 title='So who hit the most home runs for one team since 1920?'>
+         17
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=18 title='Other cool <code>dplyr</code> features'>
+         18
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=19 title='Other cool <code>dplyr</code> features'>
+         19
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=20 title='Other Resources'>
+         20
       </a>
     </li>
   </ul>

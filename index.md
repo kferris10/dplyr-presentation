@@ -312,14 +312,14 @@ Batting %>%                                                 # takes the Batting 
 ```
 
 ---
-## Grouping with `group_by()`
+## 6) Grouping with `group_by()`
 
 Created a grouped tbl where operations are performed "by group"
 
 Not really useful on its own, so let's combine it with...
 
 --- 
-## Summarising with `summarise()`
+## 7) Summarising with `summarise()`
 
 Summarise each group in a tbl
 
@@ -365,6 +365,7 @@ microbenchmark(dplyr = batting_m %>% group_by(yearID) %>% summarise(sum(HR)),
 #>   tapp  1.4  1.6  2.2    2.4  2.5   7.3   500 a
 ```
 
+---
 ## `dplyr` is even faster than `tapply` when there are many groups
 
 
@@ -387,15 +388,15 @@ microbenchmark(dplyr = batting_m %>% group_by(yearID, playerID) %>% summarise(su
 
 
 ```r
-Batting %>% 
+result <- Batting %>% 
   tbl_df() %>% 
   filter(yearID >= 1920) %>% 
   group_by(playerID, teamID) %>% 
   summarise(HR = sum(HR), 
             years = paste(min(yearID), max(yearID), sep = ":")) %>% 
   ungroup() %>% 
-  arrange(desc(HR)) %>% 
-  head()
+  arrange(desc(HR))
+head(result)
 ```
 
 ```
@@ -444,19 +445,53 @@ inner_join(batting_m, Master)
 ```
 -->
 
+---
 ## Other cool `dplyr` features
 
-> * `dplyr` implements SQL style joins
-> * can connect to SQL databases, run SQL code outside of R, then pull the results into R
-> * other people are actively providing enhancements to `dplyr`
-   * `tidyr` for reshaping data
-   * `assertr` for making assertions abou the data
-   * `magrittr` and `pipeR` for chaining
+* `dplyr` implements SQL style joins
 
+
+```r
+inner_join(result, Master %>% select(playerID, nameLast)) %>% head()
+```
+
+```
+#> Source: local data frame [6 x 5]
+#> 
+#>    playerID teamID  HR     years nameLast
+#> 1  ruthba01    NYA 659 1920:1934     Ruth
+#> 2 bondsba01    SFN 586 1993:2007    Bonds
+#> 3 schmimi01    PHI 548 1972:1989  Schmidt
+#> 4  sosasa01    CHN 545 1992:2004     Sosa
+#> 5 mantlmi01    NYA 536 1951:1968   Mantle
+#> 6 willite01    BOS 521 1939:1960 Williams
+```
+
+* can connect to SQL databases, run SQL code outside of R, then pull the results into R
+* `dplyr` uses the same commands whether the data are stored in a database or loaded into R
+
+---
+## Other cool `dplyr` features
+
+* other people are actively providing enhancements to `dplyr`
+   * `tidyr` for reshaping data
+   * `assertr` for making assertions about the data
+   * `magrittr` and `pipeR` for chaining
+   * `Rcpp` for speeding things up
+
+---
 ## Other Resources
 
-1. To migrate from `plyr` [plyrToDplyr](https://github.com/jimhester/plyrTodplyr)
 
+1. [dplyr cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+2. `dplyr`'s vignettes `browseVignettes(package = "dplyr")`
+3. Introductions: 
+    * [5 minute intro](http://practicalrvideos.blogspot.com/2014/08/dplyr-gamechanger-for-data-manipulation.html)
+    * [Wickham's tutorial](https://www.dropbox.com/sh/i8qnluwmuieicxc/AAAgt9tIKoIm7WZKIyK25lh6a) (open the dplyr-tutorial.pdf document)
+    * [A much more thorough tutorial](http://patilv.com/dplyr/)
+4. [Migrating from `plyr`](https://github.com/jimhester/plyrTodplyr)
+5. [Some general thoughts](http://datascience.la/dplyr-some-more-reflections/)
+6. [More advanced example](http://timelyportfolio.github.io/rCharts_factor_analytics/factors_with_new_R.html)
 
 
 
