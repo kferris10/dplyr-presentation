@@ -49,8 +49,9 @@
   <article data-timings="">
     <p>A new R package written by Hadley Wickham and Romain Francois (Wickham and Francois, 2014)</p>
 
+<p>It provides a &quot;flexible grammar of data manipulation&quot;</p>
+
 <ul class = "build incremental">
-<li>Provides a flexible grammar of data manipulation</li>
 <li>Identifies the most important tasks in data manipulation and makes them easy to use</li>
 <li>Provides blazing fast performance by writing key code in C++</li>
 <li>Uses the same interface to manipulate data frames, data tables, and databases</li>
@@ -274,11 +275,11 @@ batting_m
   </hgroup>
   <article data-timings="">
     <ol>
-<li>Turn data.frame into a <code>tbl_df</code></li>
-<li>Select columns</li>
-<li>Select rows</li>
-<li>Arrange rows</li>
-<li>Add new columns</li>
+<li>Turn data.frame into a tbl with <code>tbl_df</code></li>
+<li>Select columns with <code>select</code></li>
+<li>Select rows with <code>filter</code></li>
+<li>Arrange rows with <code>arrange</code></li>
+<li>Add new columns with <code>mutate</code></li>
 </ol>
 
   </article>
@@ -401,10 +402,10 @@ prod(cumsum(x))
 
 <slide class="" id="slide-14" style="background:;">
   <hgroup>
-    <h2>7) Summarising with <code>summarise()</code></h2>
+    <h2>7) Summarizing with <code>summarise()</code></h2>
   </hgroup>
   <article data-timings="">
-    <p>Summarise each group in a tbl</p>
+    <p>Summarize each group in a tbl</p>
 
 <pre><code class="r">batting_m %&gt;%            # take the batting_m tbl_df, THEN
   group_by(yearID) %&gt;%   # groups it by year, THEN
@@ -603,11 +604,12 @@ inner_join(batting_m, Master)
 <ul>
 <li><a href="http://practicalrvideos.blogspot.com/2014/08/dplyr-gamechanger-for-data-manipulation.html">5 minute intro</a></li>
 <li><a href="https://www.dropbox.com/sh/i8qnluwmuieicxc/AAAgt9tIKoIm7WZKIyK25lh6a">Wickham&#39;s tutorial</a> (open the dplyr-tutorial.pdf document)</li>
-<li><a href="http://patilv.com/dplyr/">A much more thorough tutorial</a></li>
+<li><a href="http://patilv.com/dplyr/">Vivek Patil&#39;s thorough tutorial</a></li>
 </ul></li>
 <li><a href="https://github.com/jimhester/plyrTodplyr">Migrating from <code>plyr</code></a></li>
-<li><a href="http://datascience.la/dplyr-some-more-reflections/">Some general thoughts</a></li>
-<li><a href="http://timelyportfolio.github.io/rCharts_factor_analytics/factors_with_new_R.html">More advanced example</a></li>
+<li><a href="http://datascience.la/dplyr-some-more-reflections/">Some general thoughts on the dplyr API</a></li>
+<li><a href="http://timelyportfolio.github.io/rCharts_factor_analytics/factors_with_new_R.html">More advanced example and plotting</a></li>
+<li><a href="https://github.com/hadley/dplyr">`dplyr&#39;s GitHub repo</a></li>
 </ol>
 
   </article>
@@ -698,7 +700,7 @@ inner_join(batting_m, Master)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=14 title='7) Summarising with <code>summarise()</code>'>
+        data-slide=14 title='7) Summarizing with <code>summarise()</code>'>
          14
       </a>
     </li>

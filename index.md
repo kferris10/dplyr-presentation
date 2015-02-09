@@ -21,7 +21,9 @@ assets:
 ## dplyr
 
 A new R package written by Hadley Wickham and Romain Francois (Wickham and Francois, 2014)
-> * Provides a flexible grammar of data manipulation
+
+It provides a "flexible grammar of data manipulation"
+
 > * Identifies the most important tasks in data manipulation and makes them easy to use
 > * Provides blazing fast performance by writing key code in C++
 > * Uses the same interface to manipulate data frames, data tables, and databases
@@ -212,11 +214,11 @@ batting_m
 ---
 ## Steps so far
 
-1. Turn data.frame into a `tbl_df`
-2. Select columns
-3. Select rows
-4. Arrange rows
-5. Add new columns
+1. Turn data.frame into a tbl with `tbl_df`
+2. Select columns with `select`
+3. Select rows with `filter`
+4. Arrange rows with `arrange`
+5. Add new columns with `mutate`
 
 ---
 ## Nested, Unreadable Code
@@ -319,9 +321,9 @@ Created a grouped tbl where operations are performed "by group"
 Not really useful on its own, so let's combine it with...
 
 --- 
-## 7) Summarising with `summarise()`
+## 7) Summarizing with `summarise()`
 
-Summarise each group in a tbl
+Summarize each group in a tbl
 
 
 ```r
@@ -488,10 +490,11 @@ inner_join(result, Master %>% select(playerID, nameLast)) %>% head()
 3. Introductions: 
     * [5 minute intro](http://practicalrvideos.blogspot.com/2014/08/dplyr-gamechanger-for-data-manipulation.html)
     * [Wickham's tutorial](https://www.dropbox.com/sh/i8qnluwmuieicxc/AAAgt9tIKoIm7WZKIyK25lh6a) (open the dplyr-tutorial.pdf document)
-    * [A much more thorough tutorial](http://patilv.com/dplyr/)
+    * [Vivek Patil's thorough tutorial](http://patilv.com/dplyr/)
 4. [Migrating from `plyr`](https://github.com/jimhester/plyrTodplyr)
-5. [Some general thoughts](http://datascience.la/dplyr-some-more-reflections/)
-6. [More advanced example](http://timelyportfolio.github.io/rCharts_factor_analytics/factors_with_new_R.html)
+5. [Some general thoughts on the dplyr API](http://datascience.la/dplyr-some-more-reflections/)
+6. [More advanced example and plotting](http://timelyportfolio.github.io/rCharts_factor_analytics/factors_with_new_R.html)
+7. [`dplyr's GitHub repo](https://github.com/hadley/dplyr)
 
 
 
