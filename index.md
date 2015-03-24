@@ -1,8 +1,8 @@
 ---
 title       : dplyr
 subtitle    : A gamechanger for data manipulation in R
-author      : Kevin Ferris
-job         : Montana State University
+author      : Stat 408
+job         : "Friday, March 27, 2015"
 framework   : io2012        # 
 highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
@@ -499,5 +499,42 @@ inner_join(result, Master %>% select(playerID, nameLast)) %>% head()
 6. [More advanced example and plotting](http://timelyportfolio.github.io/rCharts_factor_analytics/factors_with_new_R.html)
 7. [`dplyr's GitHub repo](https://github.com/hadley/dplyr)
 
+---
+## The NYC Flights Data
+
+The `flights` data from the `nycflights13` package contains information on every flight that departed NYC in 2013.
+
+
+```r
+library(nycflights13)
+dim(flights)
+```
+
+```
+#> [1] 336776     16
+```
+
+---
+## Some Practice Problems
+
+1. To make viewing easier, turn it into a `tbl_df`
+2. Sometimes delay on arrival or departure is missing
+3. We'll only use the year, month, day, distance, dep_delay, arr_delay, carrier, and tailnum columns.  Select only these columns.
+4. Create a new column for total delay which is delay on departure plus delay on arrival.
+5. Practice chaining by combining these four steps into one with the `%>%` operator.
+6. On what day did the longest delay occur.  
+7. Use `group_by` to find the average and total (sum) of delay for each month.
+8. Which airplane had the longest delays on average? Which carrier did it belong to?
+
+---
+## More Practice problems
+
+9. Use `ggplot2` to make a [plot of delay vs distance]().  What can you learn from this plot? (Hint: the answer is almost nothing).
+
+
+
+10. There are so many data points that the plot doesn't tell us much.  We need to summarize the data.  The `tailnum` column is a unique identifier for each airplane.  For each airplane, calculate the average distance flown, the average delay, and the number of flights out of NYC (the `n()` function may be useful).
+11. Use `ggplot2` to plot delay vs distance and make the size of the points proportional to the number of flights.  Add a smoother to the plot.  You're result should [look like this]().
+12. Does is appear that longer flights have longer delays?  Why might this be?
 
 

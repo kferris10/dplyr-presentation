@@ -4,7 +4,7 @@
   <title>dplyr</title>
   <meta charset="utf-8">
   <meta name="description" content="dplyr">
-  <meta name="author" content="Kevin Ferris">
+  <meta name="author" content="Stat 408">
   <meta name="generator" content="slidify" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -35,7 +35,7 @@
   <hgroup class="auto-fadein">
     <h1>dplyr</h1>
     <h2>A gamechanger for data manipulation in R</h2>
-    <p>Kevin Ferris<br/>Montana State University</p>
+    <p>Stat 408<br/>Friday, March 27, 2015</p>
   </hgroup>
   <article></article>  
 </slide>
@@ -619,6 +619,60 @@ inner_join(batting_m, Master)
   <!-- Presenter Notes -->
 </slide>
 
+<slide class="" id="slide-21" style="background:;">
+  <hgroup>
+    <h2>The NYC Flights Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The <code>flights</code> data from the <code>nycflights13</code> package contains information on every flight that departed NYC in 2013.</p>
+
+<pre><code class="r">library(nycflights13)
+dim(flights)
+</code></pre>
+
+<pre><code>#&gt; [1] 336776     16
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-22" style="background:;">
+  <hgroup>
+    <h2>Some Practice Problems</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li>To make viewing easier, turn it into a <code>tbl_df</code></li>
+<li>Sometimes delay on arrival or departure is missing</li>
+<li>We&#39;ll only use the year, month, day, distance, dep_delay, arr_delay, carrier, and tailnum columns.  Select only these columns.</li>
+<li>Create a new column for total delay which is delay on departure plus delay on arrival.</li>
+<li>Practice chaining by combining these four steps into one with the <code>%&gt;%</code> operator.</li>
+<li>On what day did the longest delay occur.<br></li>
+<li>Use <code>group_by</code> to find the average and total (sum) of delay for each month.</li>
+<li>Which airplane had the longest delays on average? Which carrier did it belong to?</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-23" style="background:;">
+  <hgroup>
+    <h2>More Practice problems</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li><p>Use <code>ggplot2</code> to make a <a href="">plot of delay vs distance</a>.  What can you learn from this plot? (Hint: the answer is almost nothing).</p></li>
+<li><p>There are so many data points that the plot doesn&#39;t tell us much.  We need to summarize the data.  The <code>tailnum</code> column is a unique identifier for each airplane.  For each airplane, calculate the average distance flown, the average delay, and the number of flights out of NYC (the <code>n()</code> function may be useful).</p></li>
+<li><p>Use <code>ggplot2</code> to plot delay vs distance and make the size of the points proportional to the number of flights.  Add a smoother to the plot.  You&#39;re result should <a href="">look like this</a>.</p></li>
+<li><p>Does is appear that longer flights have longer delays?  Why might this be?</p></li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
     <slide class="backdrop"></slide>
   </slides>
   <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
@@ -741,6 +795,24 @@ inner_join(batting_m, Master)
       <a href="#" target="_self" rel='tooltip' 
         data-slide=20 title='Other Resources'>
          20
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=21 title='The NYC Flights Data'>
+         21
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=22 title='Some Practice Problems'>
+         22
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=23 title='More Practice problems'>
+         23
       </a>
     </li>
   </ul>

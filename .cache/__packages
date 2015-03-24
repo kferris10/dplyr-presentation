@@ -5,3 +5,7 @@ plyr
 Lahman
 dplyr
 microbenchmark
+nycflights13
+ggplot2
+nlme
+mgcv
